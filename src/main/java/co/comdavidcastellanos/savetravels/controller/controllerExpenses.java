@@ -48,10 +48,40 @@ public class controllerExpenses {
         return "expenseDetail.jsp";
     }
 
+    @GetMapping("/edit/{id}")
+    public String expenseAEditarPorIDJSP(Model model, @PathVariable("id") Long id,
+                                        @ModelAttribute("formExpense") Expense expense) {
+        Expense expenseAEditar = service.buscarExpensePorId(id);
+
+        if (expenseAEditar == null) {
+            return "redirect:/expenses";
+        }
+
+        model.addAttribute("expenseAEditar", expenseAEditar);
+
+        return "editExpense.jsp";
+
+    }
+
+    @PutMapping("/edit/{id}")
+    public String actualizarUnExpensePorIDJSP(@Valid @ModelAttribute("expenseAEditar") Expense expense,
+                                               BindingResult result) {
+        if (result.hasErrors()) {
+            return "editExpense.jsp";
+        } else {
+            service.guardarExpense(expense);
+            return "redirect:/expenses";
+        }
+
+    }
+
+
     @DeleteMapping("/delete/{id}")
     public String eliminarExpensePorIDJSP(@PathVariable("id") long id) {
         service.eliminarExpense(id);
         return "redirect:/expenses";
     }
+
+
 
 }
